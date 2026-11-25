@@ -1,11 +1,15 @@
-name: Build FerchuVPN APK
+name: Crear APK de FerchuVPN
 on:
   workflow_dispatch:
 jobs:
-  build:
+  construir:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.38.5'
@@ -15,5 +19,5 @@ jobs:
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: ferchuvpn-apk
+          name: ferchuvpn_apk
           path: build/app/outputs/flutter-apk/app-release.apk
