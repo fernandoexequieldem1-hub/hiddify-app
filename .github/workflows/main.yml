@@ -1,23 +1,39 @@
-name: Crear APK de FerchuVPN
+name: construir
+
 on:
   workflow_dispatch:
+
 jobs:
-  construir:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.38.5'
           channel: 'stable'
-          cache: true
-      - run: flutter pub get
-      - run: flutter build apk --release
+
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      - name: Generar codigo
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run slang
+          make android-prepare
+
+      - name: Run flutter build apk --release
+        run: flutter build apk --release
+
       - uses: actions/upload-artifact@v4
         with:
-          name: ferchuvpn_apk
+          name: FerchuVPN
           path: build/app/outputs/flutter-apk/app-release.apk
